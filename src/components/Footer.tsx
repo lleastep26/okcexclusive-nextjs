@@ -11,7 +11,7 @@ export function Footer() {
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
             <Link href="/" className="inline-flex items-center gap-2.5 text-white">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-emerald-400">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-blue-400">
                 <SparkleIcon className="h-5 w-5" />
               </span>
               <span className="font-display text-lg font-semibold">{SITE_NAME}</span>

@@ -12,7 +12,7 @@ function ServiceCard({
 }) {
   return (
     <article className="card group">
-      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-accent transition-colors group-hover:bg-accent group-hover:text-white">
+      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-accent transition-colors group-hover:bg-accent group-hover:text-white">
         <Icon className="h-5 w-5" />
       </div>
       <h3 className="mt-4 font-display text-xl font-semibold text-slate-950">

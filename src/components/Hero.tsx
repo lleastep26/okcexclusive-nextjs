@@ -11,10 +11,10 @@ export function Hero() {
 
       <div className="section-container relative grid items-center gap-10 py-16 sm:py-20 lg:grid-cols-2 lg:gap-16 lg:py-28">
         <div className="animate-fade-up">
-          <p className="section-label text-emerald-400">Oklahoma City&apos;s Premium Cleaners</p>
+          <p className="section-label text-blue-400">Oklahoma City&apos;s Premium Cleaners</p>
           <h1 className="mt-4 font-display text-4xl font-semibold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
             Exclusive Cleaning Services for Your{" "}
-            <span className="text-emerald-400">Home &amp; Business</span>
+            <span className="text-blue-400">Home &amp; Business</span>
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-300">
             We transform your space with trained professionals, eco-friendly
@@ -41,7 +41,7 @@ export function Hero() {
         </div>
 
         <div className="relative animate-fade-up [animation-delay:150ms]">
-          <div className="absolute -inset-4 rounded-3xl bg-emerald-500/10 blur-2xl" />
+          <div className="absolute -inset-4 rounded-3xl bg-blue-500/10 blur-2xl" />
           <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-black/40">
             <Image
               src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=80"

@@ -3,11 +3,12 @@
 import { FormEvent, useState } from "react";
 import { Button } from "./Button";
 import { serviceOptions } from "@/lib/content";
+import { submitToWeb3Forms } from "@/lib/web3forms";
 
 type FormState = "idle" | "submitting" | "success" | "error";
 
 const inputClass =
-  "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 placeholder:text-slate-400 transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-emerald-500/20";
+  "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 placeholder:text-slate-400 transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-blue-500/20";
 
 const labelClass = "mb-1.5 block text-sm font-medium text-slate-700";
 
@@ -23,33 +24,28 @@ export function QuoteForm() {
     const form = event.currentTarget;
     const formData = new FormData(form);
 
-    try {
-      const response = await fetch("/api/quote", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(Object.fromEntries(formData.entries())),
-      });
+    const entries = Object.fromEntries(formData.entries()) as Record<string, string>;
+    const serviceLabel = serviceOptions.find((o) => o.value === entries.service)?.label ?? entries.service ?? "";
+    const result = await submitToWeb3Forms({
+      subject: `New Quote Request — ${entries.name ?? ""}`,
+      from_name: entries.name ?? "",
+      ...entries,
+      service: serviceLabel,
+    });
 
-      const data = (await response.json()) as { error?: string };
-
-      if (!response.ok) {
-        throw new Error(data.error ?? "Something went wrong. Please try again.");
-      }
-
+    if (result.ok) {
       setState("success");
       form.reset();
-    } catch (error) {
+    } else {
       setState("error");
-      setErrorMessage(
-        error instanceof Error ? error.message : "Something went wrong.",
-      );
+      setErrorMessage(result.error);
     }
   }
 
   if (state === "success") {
     return (
       <div
-        className="rounded-2xl border border-emerald-200 bg-emerald-50 p-8 text-center"
+        className="rounded-2xl border border-blue-200 bg-blue-50 p-8 text-center"
         role="status"
       >
         <h3 className="font-display text-2xl font-semibold text-slate-950">

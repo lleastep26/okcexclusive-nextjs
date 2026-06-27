@@ -32,7 +32,7 @@ export default function ContactPage() {
 
             <ul className="space-y-6">
               <li className="flex gap-4">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-accent">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-accent">
                   <MapPinIcon />
                 </span>
                 <div>
@@ -41,7 +41,7 @@ export default function ContactPage() {
                 </div>
               </li>
               <li className="flex gap-4">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-accent">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-accent">
                   <PhoneIcon />
                 </span>
                 <div>
@@ -55,7 +55,7 @@ export default function ContactPage() {
                 </div>
               </li>
               <li className="flex gap-4">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-accent">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-accent">
                   <MailIcon />
                 </span>
                 <div>

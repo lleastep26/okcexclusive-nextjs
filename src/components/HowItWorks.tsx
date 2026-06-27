@@ -12,7 +12,7 @@ export function HowItWorks() {
         <ol className="mt-12 grid gap-8 lg:grid-cols-3">
           {howItWorksSteps.map((step) => (
             <li key={step.step} className="relative">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-950 font-display text-lg font-semibold text-emerald-400">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-950 font-display text-lg font-semibold text-blue-400">
                 {step.step}
               </div>
               <h3 className="mt-5 font-display text-2xl font-semibold text-slate-950">

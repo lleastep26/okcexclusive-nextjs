@@ -21,7 +21,7 @@ export function GuaranteeSection() {
             const Icon = guaranteeIcons[index];
             return (
               <article key={item.title} className="card">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-950 text-emerald-400">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-950 text-blue-400">
                   <Icon className="h-5 w-5" />
                 </div>
                 <h3 className="mt-4 font-display text-lg font-semibold text-slate-950">

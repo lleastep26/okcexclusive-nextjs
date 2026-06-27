@@ -13,7 +13,7 @@ type ButtonProps = ComponentPropsWithoutRef<"button"> & {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-accent text-white hover:bg-accent-hover shadow-sm shadow-emerald-500/20",
+    "bg-accent text-white hover:bg-accent-hover shadow-sm shadow-blue-500/20",
   secondary:
     "bg-slate-950 text-white hover:bg-slate-900 shadow-sm",
   outline:

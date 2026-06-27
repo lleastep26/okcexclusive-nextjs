@@ -27,7 +27,7 @@ function HeaderContent({ pathname }: { pathname: string }) {
           className="flex items-center gap-2.5 text-slate-950 transition-opacity hover:opacity-80"
           onClick={closeMenu}
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-950 text-emerald-400">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-950 text-blue-400">
             <SparkleIcon className="h-5 w-5" />
           </span>
           <span className="hidden font-display text-lg font-semibold sm:block">
@@ -93,7 +93,7 @@ function HeaderContent({ pathname }: { pathname: string }) {
                   onClick={closeMenu}
                   className={`rounded-lg px-3 py-3 text-base font-medium ${
                     active
-                      ? "bg-emerald-50 text-accent"
+                      ? "bg-blue-50 text-accent"
                       : "text-slate-700 hover:bg-slate-50"
                   }`}
                 >

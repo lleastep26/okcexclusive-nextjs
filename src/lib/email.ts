@@ -1,42 +1,45 @@
-import { Resend } from "resend";
-import { CONTACT } from "./constants";
-
-const resend = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null;
-
-const notificationEmail =
-  process.env.QUOTE_NOTIFICATION_EMAIL ?? CONTACT.email;
-
-const fromEmail =
-  process.env.RESEND_FROM_EMAIL ?? "onboarding@resend.dev";
-
 export type EmailResult =
   | { ok: true; id?: string }
   | { ok: false; error: string };
+
+const accessKey = process.env.WEB3FORMS_ACCESS_KEY;
+const TO_EMAIL = "exclusive@okcexclusivecleaning.com";
 
 export async function sendNotificationEmail(
   subject: string,
   html: string,
 ): Promise<EmailResult> {
-  if (!resend) {
-    console.warn("RESEND_API_KEY not set — email not sent:", subject);
+  if (!accessKey) {
+    console.warn("WEB3FORMS_ACCESS_KEY not set — email not sent:", subject);
     return { ok: true, id: "dev-mode" };
   }
 
   try {
-    const { data, error } = await resend.emails.send({
-      from: `Exclusive Cleaning <${fromEmail}>`,
-      to: notificationEmail,
-      subject,
-      html,
+    const res = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        access_key: accessKey,
+        subject,
+        from_name: "Exclusive Cleaning Website",
+        message: html,
+      }),
     });
 
-    if (error) {
-      return { ok: false, error: error.message };
+    const text = await res.text();
+    let data: { success: boolean; message?: string };
+    try {
+      data = JSON.parse(text) as { success: boolean; message?: string };
+    } catch {
+      console.error("Web3Forms non-JSON response:", text.slice(0, 200));
+      return { ok: false, error: "Unexpected response from email provider." };
     }
 
-    return { ok: true, id: data?.id };
+    if (!data.success) {
+      return { ok: false, error: data.message ?? "Web3Forms submission failed." };
+    }
+
+    return { ok: true };
   } catch (err) {
     const message = err instanceof Error ? err.message : "Failed to send email";
     return { ok: false, error: message };

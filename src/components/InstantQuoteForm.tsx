@@ -121,7 +121,6 @@ export function InstantQuoteForm() {
           value={sqft}
           onChange={(e) => setSqft(e.target.value)}
         />
-        <p className="mt-1.5 text-xs text-slate-400">$0.35 per sq ft · $300 minimum</p>
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2">

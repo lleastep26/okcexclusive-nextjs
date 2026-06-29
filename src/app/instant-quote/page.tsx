@@ -10,7 +10,6 @@ export const metadata: Metadata = {
 
 const highlights = [
   "Instant pricing — no waiting",
-  "$0.35 per sq ft · $300 minimum",
   "We'll follow up to confirm your appointment",
 ];
 

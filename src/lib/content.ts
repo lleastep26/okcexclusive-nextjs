@@ -6,12 +6,6 @@ export const services = [
       "Top-to-bottom detail for kitchens, bathrooms, baseboards, and every corner that needs extra attention.",
   },
   {
-    id: "standard-clean",
-    title: "Standard Clean",
-    description:
-      "Reliable upkeep for homes and offices — surfaces, floors, and high-traffic areas refreshed on schedule.",
-  },
-  {
     id: "maintenance-clean",
     title: "Maintenance Clean",
     description:
@@ -22,12 +16,6 @@ export const services = [
     title: "Post Construction Clean",
     description:
       "Dust, debris, and fine particles removed so your newly finished space is move-in ready.",
-  },
-  {
-    id: "move-in-out",
-    title: "Moving In/Out Clean",
-    description:
-      "Leave your old place spotless or arrive to a fresh start — we handle the deep clean during transitions.",
   },
   {
     id: "one-time",

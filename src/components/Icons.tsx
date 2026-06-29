@@ -244,9 +244,7 @@ export const guaranteeIcons = [
 
 export const serviceIcons = [
   DeepCleanIcon,
-  StandardCleanIcon,
   MaintenanceIcon,
   ConstructionIcon,
-  MovingIcon,
   OneTimeIcon,
 ] as const;

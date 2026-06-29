@@ -20,21 +20,10 @@ const labelClass = "mb-1.5 block text-sm font-medium text-slate-700";
 
 export function InstantQuoteForm() {
   const [sqft, setSqft] = useState("");
-  const [quote, setQuote] = useState<number | null>(null);
   const [state, setState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [confirmedQuote, setConfirmedQuote] = useState<{ price: number; sqft: number } | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
-
-  function handleSqftChange(value: string) {
-    setSqft(value);
-    const num = parseFloat(value);
-    if (!isNaN(num) && num > 0) {
-      setQuote(calcPrice(num));
-    } else {
-      setQuote(null);
-    }
-  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -99,7 +88,6 @@ export function InstantQuoteForm() {
           onClick={() => {
             setState("idle");
             setSqft("");
-            setQuote(null);
             setConfirmedQuote(null);
             formRef.current?.reset();
           }}
@@ -118,25 +106,6 @@ export function InstantQuoteForm() {
         <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
       </div>
 
-      {/* Live price display */}
-      <div className="rounded-2xl border-2 border-dashed border-blue-200 bg-blue-50 px-6 py-5 text-center">
-        {quote !== null ? (
-          <>
-            <p className="text-xs font-semibold uppercase tracking-widest text-accent">
-              Estimated Deep Clean Price
-            </p>
-            <p className="mt-1 font-display text-4xl font-bold text-slate-950">
-              ${quote.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </p>
-            {parseFloat(sqft) * RATE_PER_SQFT < MINIMUM_PRICE && (
-              <p className="mt-1 text-xs text-slate-500">Minimum $300 applies</p>
-            )}
-          </>
-        ) : (
-          <p className="text-sm text-slate-400">Enter your square footage below to see your instant price</p>
-        )}
-      </div>
-
       <div>
         <label htmlFor="sqft" className={labelClass}>
           Square footage of your home / space *
@@ -150,7 +119,7 @@ export function InstantQuoteForm() {
           className={inputClass}
           placeholder="e.g. 1800"
           value={sqft}
-          onChange={(e) => handleSqftChange(e.target.value)}
+          onChange={(e) => setSqft(e.target.value)}
         />
         <p className="mt-1.5 text-xs text-slate-400">$0.35 per sq ft · $300 minimum</p>
       </div>
@@ -207,7 +176,7 @@ export function InstantQuoteForm() {
         </p>
       )}
 
-      <Button type="submit" size="lg" disabled={state === "submitting" || quote === null}>
+      <Button type="submit" size="lg" disabled={state === "submitting"}>
         {state === "submitting" ? "Getting your quote…" : "Get My Instant Quote"}
       </Button>
     </form>

@@ -1,8 +1,14 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { MaintenanceFrequencyGrid } from "./MaintenanceFrequencyGrid";
 import { services } from "@/lib/content";
-import { type PropertyType } from "@/lib/quote-selection";
+import {
+  buildQuoteUrl,
+  MAINTENANCE_SERVICE_ID,
+  type PropertyType,
+} from "@/lib/quote-selection";
+import { useRouter } from "next/navigation";
 
 type ServiceSelectionGridProps = {
   propertyType: PropertyType;
@@ -11,11 +17,6 @@ type ServiceSelectionGridProps = {
   heading?: string;
   description?: string;
 };
-
-function buildQuoteUrl(property: PropertyType, serviceId: string) {
-  const params = new URLSearchParams({ property, service: serviceId });
-  return `/instant-quote?${params.toString()}`;
-}
 
 const copyByProperty = {
   residential: {
@@ -30,6 +31,9 @@ const copyByProperty = {
   },
 } as const;
 
+const cardClass =
+  "rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:border-accent hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
+
 export function ServiceSelectionGrid({
   propertyType,
   onBack,
@@ -38,7 +42,27 @@ export function ServiceSelectionGrid({
   description,
 }: ServiceSelectionGridProps) {
   const router = useRouter();
+  const [showMaintenanceFrequency, setShowMaintenanceFrequency] = useState(false);
   const copy = copyByProperty[propertyType];
+
+  if (showMaintenanceFrequency) {
+    return (
+      <MaintenanceFrequencyGrid
+        propertyType={propertyType}
+        onBack={() => setShowMaintenanceFrequency(false)}
+        backLabel="← Back to services"
+      />
+    );
+  }
+
+  function handleServiceSelect(serviceId: string) {
+    if (serviceId === MAINTENANCE_SERVICE_ID) {
+      setShowMaintenanceFrequency(true);
+      return;
+    }
+
+    router.push(buildQuoteUrl(propertyType, serviceId));
+  }
 
   return (
     <div className="space-y-6">
@@ -64,8 +88,8 @@ export function ServiceSelectionGrid({
           <button
             key={service.id}
             type="button"
-            onClick={() => router.push(buildQuoteUrl(propertyType, service.id))}
-            className="rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:border-accent hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            onClick={() => handleServiceSelect(service.id)}
+            className={cardClass}
           >
             <span className="font-display text-lg font-semibold text-slate-950">
               {service.title}

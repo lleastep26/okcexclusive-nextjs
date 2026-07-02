@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { InstantQuoteForm } from "@/components/InstantQuoteForm";
+import { InstantQuoteFlow } from "@/components/InstantQuoteFlow";
 import { CheckCircleIcon } from "@/components/Icons";
 import {
   formatPropertyLabel,
+  getMaintenanceFrequencyLabel,
   getServiceLabel,
+  parseMaintenanceFrequency,
   parsePropertyType,
 } from "@/lib/quote-selection";
 
@@ -20,13 +22,16 @@ const highlights = [
 ];
 
 type InstantQuotePageProps = {
-  searchParams: Promise<{ property?: string; service?: string }>;
+  searchParams: Promise<{ property?: string; service?: string; frequency?: string }>;
 };
 
 export default async function InstantQuotePage({ searchParams }: InstantQuotePageProps) {
   const params = await searchParams;
   const propertyType = parsePropertyType(params.property);
   const serviceLabel = getServiceLabel(params.service);
+  const frequencyLabel = getMaintenanceFrequencyLabel(
+    parseMaintenanceFrequency(params.frequency),
+  );
 
   return (
     <section className="section-padding bg-slate-50">
@@ -41,13 +46,14 @@ export default async function InstantQuotePage({ searchParams }: InstantQuotePag
               confirm your appointment.
             </p>
 
-            {(propertyType || serviceLabel) && (
+            {(propertyType || serviceLabel || frequencyLabel) && (
               <p className="mt-4 text-sm text-slate-600">
                 Quoting for{" "}
                 <span className="font-medium text-slate-950">
                   {[
                     propertyType ? formatPropertyLabel(propertyType) : null,
                     serviceLabel,
+                    frequencyLabel,
                   ]
                     .filter(Boolean)
                     .join(" · ")}
@@ -74,9 +80,10 @@ export default async function InstantQuotePage({ searchParams }: InstantQuotePag
 
           <div className="lg:col-span-3">
             <div className="card">
-              <InstantQuoteForm
+              <InstantQuoteFlow
                 propertyType={propertyType}
                 serviceId={params.service ?? null}
+                frequency={parseMaintenanceFrequency(params.frequency)}
               />
             </div>
           </div>

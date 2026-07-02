@@ -11,7 +11,9 @@ import {
 } from "@/lib/quote-pricing";
 import {
   formatPropertyLabel,
+  getMaintenanceFrequencyLabel,
   getServiceLabel,
+  type MaintenanceFrequency,
   type PropertyType,
 } from "@/lib/quote-selection";
 import { submitToWeb3Forms } from "@/lib/web3forms";
@@ -21,6 +23,7 @@ type FormState = "idle" | "submitting" | "success" | "error";
 type InstantQuoteFormProps = {
   propertyType?: PropertyType | null;
   serviceId?: string | null;
+  maintenanceFrequency?: MaintenanceFrequency | null;
 };
 
 type ConfirmedQuote = {
@@ -39,6 +42,7 @@ const labelClass = "mb-1.5 block text-sm font-medium text-slate-700";
 export function InstantQuoteForm({
   propertyType = null,
   serviceId = null,
+  maintenanceFrequency = null,
 }: InstantQuoteFormProps) {
   const [sqft, setSqft] = useState("");
   const [state, setState] = useState<FormState>("idle");
@@ -48,7 +52,12 @@ export function InstantQuoteForm({
 
   const propertyLabel = propertyType ? formatPropertyLabel(propertyType) : null;
   const serviceLabel = getServiceLabel(serviceId ?? undefined);
+  const frequencyLabel = getMaintenanceFrequencyLabel(maintenanceFrequency);
   const hasSelection = propertyLabel !== null;
+
+  function selectionSummary() {
+    return [propertyLabel, serviceLabel, frequencyLabel].filter(Boolean).join(" · ");
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -66,6 +75,7 @@ export function InstantQuoteForm({
     const quoteDetails = [
       propertyLabel ? `Property: ${propertyLabel}` : null,
       serviceLabel ? `Service: ${serviceLabel}` : null,
+      frequencyLabel ? `Frequency: ${frequencyLabel}` : null,
     ]
       .filter(Boolean)
       .join(" · ");
@@ -78,6 +88,7 @@ export function InstantQuoteForm({
       phone: entries.phone ?? "",
       "Property Type": propertyLabel ?? "Not specified",
       Service: serviceLabel ?? "Not specified",
+      Frequency: frequencyLabel ?? "Not specified",
       "Square Footage": `${sqftNum.toLocaleString()} sq ft`,
       Rate: rateFormatted,
       "Quoted Price": `${priceFormatted}${quote.minimumApplied && quote.minimum ? ` (minimum $${quote.minimum} applied)` : ""}`,
@@ -107,10 +118,8 @@ export function InstantQuoteForm({
         <p className="text-sm font-semibold uppercase tracking-widest text-accent">
           Your Instant Quote
         </p>
-        {(propertyLabel || serviceLabel) && (
-          <p className="mt-2 text-sm text-slate-600">
-            {[propertyLabel, serviceLabel].filter(Boolean).join(" · ")}
-          </p>
+        {(propertyLabel || serviceLabel || frequencyLabel) && (
+          <p className="mt-2 text-sm text-slate-600">{selectionSummary()}</p>
         )}
         <p className="mt-3 font-display text-5xl font-bold text-slate-950">
           {formatPrice(confirmedQuote.price)}
@@ -153,6 +162,12 @@ export function InstantQuoteForm({
               <>
                 {" "}
                 · <span className="font-medium text-slate-950">{serviceLabel}</span>
+              </>
+            ) : null}
+            {frequencyLabel ? (
+              <>
+                {" "}
+                · <span className="font-medium text-slate-950">{frequencyLabel}</span>
               </>
             ) : null}
           </p>

@@ -6,8 +6,11 @@ import { Button } from "./Button";
 import {
   calcQuotePrice,
   formatPrice,
+  formatQuoteEmailDetails,
+  formatQuoteSummary,
   formatRate,
-  formatRateShort,
+  formatRatePerVisit,
+  type QuoteResult,
 } from "@/lib/quote-pricing";
 import {
   formatPropertyLabel,
@@ -26,12 +29,8 @@ type InstantQuoteFormProps = {
   maintenanceFrequency?: MaintenanceFrequency | null;
 };
 
-type ConfirmedQuote = {
-  price: number;
+type ConfirmedQuote = QuoteResult & {
   sqft: number;
-  rate: number;
-  minimumApplied: boolean;
-  minimum: number | null;
 };
 
 const inputClass =
@@ -69,9 +68,16 @@ export function InstantQuoteForm({
     const entries = Object.fromEntries(formData.entries()) as Record<string, string>;
 
     const sqftNum = parseFloat(sqft);
-    const quote = calcQuotePrice(sqftNum, propertyType, serviceId);
+    const quote = calcQuotePrice(
+      sqftNum,
+      propertyType,
+      serviceId,
+      maintenanceFrequency,
+    );
     const priceFormatted = formatPrice(quote.price);
-    const rateFormatted = formatRate(quote.rate);
+    const rateFormatted = quote.isMaintenanceMonthly
+      ? formatRatePerVisit(quote.rate)
+      : formatRate(quote.rate);
     const quoteDetails = [
       propertyLabel ? `Property: ${propertyLabel}` : null,
       serviceLabel ? `Service: ${serviceLabel}` : null,
@@ -81,7 +87,7 @@ export function InstantQuoteForm({
       .join(" · ");
 
     const result = await submitToWeb3Forms({
-      subject: `New Instant Quote — ${entries.name ?? ""} — ${priceFormatted}`,
+      subject: `New Instant Quote — ${entries.name ?? ""} — ${priceFormatted}${quote.isMaintenanceMonthly ? "/mo" : ""}`,
       from_name: entries.name ?? "",
       name: entries.name ?? "",
       email: entries.email ?? "",
@@ -91,11 +97,12 @@ export function InstantQuoteForm({
       Frequency: frequencyLabel ?? "Not specified",
       "Square Footage": `${sqftNum.toLocaleString()} sq ft`,
       Rate: rateFormatted,
-      "Quoted Price": `${priceFormatted}${quote.minimumApplied && quote.minimum ? ` (minimum $${quote.minimum} applied)` : ""}`,
-      message: [
-        quoteDetails,
-        `Quote for ${sqftNum.toLocaleString()} sq ft: ${priceFormatted}${quote.minimumApplied && quote.minimum ? ` (minimum $${quote.minimum} applied)` : ""}`,
-      ]
+      "Visits Per Month": quote.visitsPerMonth?.toString() ?? "N/A",
+      "Per Visit Price": quote.perVisitPrice ? formatPrice(quote.perVisitPrice) : "N/A",
+      "Quoted Price": quote.isMaintenanceMonthly
+        ? `${priceFormatted} per month`
+        : `${priceFormatted}${quote.minimumApplied && quote.minimum ? ` (minimum $${quote.minimum} applied)` : ""}`,
+      message: [quoteDetails, formatQuoteEmailDetails(quote, sqftNum)]
         .filter(Boolean)
         .join("\n"),
     });
@@ -121,15 +128,17 @@ export function InstantQuoteForm({
         {(propertyLabel || serviceLabel || frequencyLabel) && (
           <p className="mt-2 text-sm text-slate-600">{selectionSummary()}</p>
         )}
+        {confirmedQuote.isMaintenanceMonthly && (
+          <p className="mt-3 text-sm font-medium text-slate-600">Estimated monthly total</p>
+        )}
         <p className="mt-3 font-display text-5xl font-bold text-slate-950">
           {formatPrice(confirmedQuote.price)}
+          {confirmedQuote.isMaintenanceMonthly && (
+            <span className="ml-1 text-2xl font-semibold text-slate-500">/mo</span>
+          )}
         </p>
         <p className="mt-2 text-sm text-slate-500">
-          Based on {confirmedQuote.sqft.toLocaleString()} sq ft @{" "}
-          {formatRateShort(confirmedQuote.rate)}
-          {confirmedQuote.minimumApplied && confirmedQuote.minimum
-            ? ` (minimum $${confirmedQuote.minimum} applies)`
-            : ""}
+          {formatQuoteSummary(confirmedQuote, confirmedQuote.sqft)}
         </p>
         <p className="mt-5 text-slate-600">
           We&apos;ve received your info and will reach out shortly to confirm your

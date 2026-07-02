@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { buildEmailHtml, fieldRow, sendNotificationEmail } from "@/lib/email";
-import { calcQuotePrice, formatRate } from "@/lib/quote-pricing";
-import { parsePropertyType } from "@/lib/quote-selection";
+import { calcQuotePrice, formatPrice, formatRate, formatRatePerVisit } from "@/lib/quote-pricing";
+import { parseMaintenanceFrequency, parsePropertyType } from "@/lib/quote-selection";
 import { getClientIp, isRateLimited } from "@/lib/rate-limit";
 
 type Body = {
@@ -11,6 +11,7 @@ type Body = {
   sqft?: string;
   property?: string;
   service?: string;
+  frequency?: string;
   website?: string;
 };
 
@@ -65,18 +66,33 @@ export async function POST(request: Request) {
     sqft,
     parsePropertyType(body.property),
     body.service ?? null,
+    parseMaintenanceFrequency(body.frequency),
   );
-  const priceFormatted = `$${quote.price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const priceFormatted = formatPrice(quote.price);
+  const rateFormatted = quote.isMaintenanceMonthly
+    ? formatRatePerVisit(quote.rate)
+    : formatRate(quote.rate);
 
   const rows = [
     fieldRow("Name", name),
     fieldRow("Email", email),
     fieldRow("Phone", phone),
     fieldRow("Square Footage", `${sqft.toLocaleString()} sq ft`),
-    fieldRow("Rate", formatRate(quote.rate)),
+    fieldRow("Rate", rateFormatted),
+    ...(quote.visitsPerMonth
+      ? [
+          fieldRow("Visits Per Month", String(quote.visitsPerMonth)),
+          fieldRow(
+            "Per Visit Price",
+            quote.perVisitPrice ? formatPrice(quote.perVisitPrice) : "N/A",
+          ),
+        ]
+      : []),
     fieldRow(
       "Quoted Price",
-      `${priceFormatted}${quote.minimumApplied && quote.minimum ? ` (minimum $${quote.minimum} applied)` : ""}`,
+      quote.isMaintenanceMonthly
+        ? `${priceFormatted} per month`
+        : `${priceFormatted}${quote.minimumApplied && quote.minimum ? ` (minimum $${quote.minimum} applied)` : ""}`,
     ),
   ].join("");
 

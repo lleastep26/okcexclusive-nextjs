@@ -22,7 +22,7 @@ export function Hero() {
             commercial cleaning tailored to your needs.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <Button href="/instant-quote" size="lg">
+            <Button href="/book" size="lg">
               Get a Quote
             </Button>
             <Button

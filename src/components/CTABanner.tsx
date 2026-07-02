@@ -23,7 +23,7 @@ export function CTABanner({
               {description}
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Button href="/instant-quote" size="lg">
+              <Button href="/book" size="lg">
                 Book a Clean
               </Button>
               <Button

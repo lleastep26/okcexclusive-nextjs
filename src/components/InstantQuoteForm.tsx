@@ -1,10 +1,21 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useState, useRef } from "react";
 import { Button } from "./Button";
+import {
+  formatPropertyLabel,
+  getServiceLabel,
+  type PropertyType,
+} from "@/lib/quote-selection";
 import { submitToWeb3Forms } from "@/lib/web3forms";
 
 type FormState = "idle" | "submitting" | "success" | "error";
+
+type InstantQuoteFormProps = {
+  propertyType?: PropertyType | null;
+  serviceId?: string | null;
+};
 
 const RATE_PER_SQFT = 0.35;
 const MINIMUM_PRICE = 300;
@@ -18,12 +29,19 @@ const inputClass =
 
 const labelClass = "mb-1.5 block text-sm font-medium text-slate-700";
 
-export function InstantQuoteForm() {
+export function InstantQuoteForm({
+  propertyType = null,
+  serviceId = null,
+}: InstantQuoteFormProps) {
   const [sqft, setSqft] = useState("");
   const [state, setState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [confirmedQuote, setConfirmedQuote] = useState<{ price: number; sqft: number } | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+
+  const propertyLabel = propertyType ? formatPropertyLabel(propertyType) : null;
+  const serviceLabel = getServiceLabel(serviceId ?? undefined);
+  const hasSelection = propertyLabel !== null;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -38,17 +56,30 @@ export function InstantQuoteForm() {
     const price = calcPrice(sqftNum);
     const priceFormatted = `$${price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     const minimumApplied = sqftNum * RATE_PER_SQFT < MINIMUM_PRICE;
+    const quoteDetails = [
+      propertyLabel ? `Property: ${propertyLabel}` : null,
+      serviceLabel ? `Service: ${serviceLabel}` : null,
+    ]
+      .filter(Boolean)
+      .join(" · ");
 
     const result = await submitToWeb3Forms({
-      subject: `New Instant Deep Clean Quote — ${entries.name ?? ""} — ${priceFormatted}`,
+      subject: `New Instant Quote — ${entries.name ?? ""} — ${priceFormatted}`,
       from_name: entries.name ?? "",
       name: entries.name ?? "",
       email: entries.email ?? "",
       phone: entries.phone ?? "",
+      "Property Type": propertyLabel ?? "Not specified",
+      Service: serviceLabel ?? "Not specified",
       "Square Footage": `${sqftNum.toLocaleString()} sq ft`,
-      "Rate": "$0.35 per sq ft",
+      Rate: "$0.35 per sq ft",
       "Quoted Price": `${priceFormatted}${minimumApplied ? " (minimum applied)" : ""}`,
-      message: `Deep clean quote for ${sqftNum.toLocaleString()} sq ft: ${priceFormatted}${minimumApplied ? " (minimum applied)" : ""}`,
+      message: [
+        quoteDetails,
+        `Quote for ${sqftNum.toLocaleString()} sq ft: ${priceFormatted}${minimumApplied ? " (minimum applied)" : ""}`,
+      ]
+        .filter(Boolean)
+        .join("\n"),
     });
 
     if (result.ok) {
@@ -67,8 +98,13 @@ export function InstantQuoteForm() {
         role="status"
       >
         <p className="text-sm font-semibold uppercase tracking-widest text-accent">
-          Your Deep Clean Quote
+          Your Instant Quote
         </p>
+        {(propertyLabel || serviceLabel) && (
+          <p className="mt-2 text-sm text-slate-600">
+            {[propertyLabel, serviceLabel].filter(Boolean).join(" · ")}
+          </p>
+        )}
         <p className="mt-3 font-display text-5xl font-bold text-slate-950">
           ${confirmedQuote.price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
         </p>
@@ -100,6 +136,26 @@ export function InstantQuoteForm() {
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} className="space-y-6" noValidate>
+      {hasSelection && (
+        <div className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-slate-700">
+          <p>
+            <span className="font-medium text-slate-950">{propertyLabel}</span>
+            {serviceLabel ? (
+              <>
+                {" "}
+                · <span className="font-medium text-slate-950">{serviceLabel}</span>
+              </>
+            ) : null}
+          </p>
+          <Link
+            href="/book"
+            className="mt-1 inline-block text-sm font-medium text-accent hover:underline"
+          >
+            Change selection
+          </Link>
+        </div>
+      )}
+
       {/* honeypot */}
       <div className="absolute -left-[9999px]" aria-hidden="true">
         <label htmlFor="website">Website</label>

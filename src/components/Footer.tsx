@@ -40,7 +40,7 @@ export function Footer() {
               ))}
               <li>
                 <Link
-                  href="/instant-quote"
+                  href="/book"
                   className="text-sm text-slate-400 transition-colors hover:text-white"
                 >
                   Book a Clean

@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
-import { QuoteForm } from "@/components/QuoteForm";
+import { BookCleanSelector } from "@/components/BookCleanSelector";
 import { CheckCircleIcon } from "@/components/Icons";
 
 export const metadata: Metadata = {
   title: "Book a Clean",
   description:
-    "Request a free cleaning quote from Exclusive Cleaning Services. Choose your service, tell us about your space, and we'll confirm your appointment.",
+    "Book a cleaning with Exclusive Cleaning Services. Choose your property type and service, then get an instant quote for your space.",
 };
 
 const highlights = [
-  "Free, no-obligation quotes",
-  "Flexible one-time or recurring service",
+  "Residential and commercial cleaning",
+  "Instant pricing after a few quick questions",
   "100% satisfaction guarantee",
 ];
 
@@ -21,10 +21,11 @@ export default function BookPage() {
         <div className="grid gap-12 lg:grid-cols-5">
           <div className="lg:col-span-2">
             <p className="section-label">Book a Clean</p>
-            <h1 className="section-title mt-3">Get your free quote</h1>
+            <h1 className="section-title mt-3">Let&apos;s get started</h1>
             <p className="section-subtitle">
-              Tell us about your space and the service you need. We&apos;ll
-              review your request and follow up to confirm details and pricing.
+              Tell us about your property and the type of clean you need. We&apos;ll
+              take you to an instant quote — enter your square footage and contact
+              info to see your price right away.
             </p>
 
             <ul className="mt-8 space-y-3">
@@ -42,7 +43,7 @@ export default function BookPage() {
 
           <div className="lg:col-span-3">
             <div className="card">
-              <QuoteForm />
+              <BookCleanSelector />
             </div>
           </div>
         </div>

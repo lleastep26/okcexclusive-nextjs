@@ -4,6 +4,12 @@ import Link from "next/link";
 import { FormEvent, useState, useRef } from "react";
 import { Button } from "./Button";
 import {
+  calcQuotePrice,
+  formatRate,
+  formatRateShort,
+  RESIDENTIAL_MINIMUM,
+} from "@/lib/quote-pricing";
+import {
   formatPropertyLabel,
   getServiceLabel,
   type PropertyType,
@@ -17,12 +23,12 @@ type InstantQuoteFormProps = {
   serviceId?: string | null;
 };
 
-const RATE_PER_SQFT = 0.35;
-const MINIMUM_PRICE = 300;
-
-function calcPrice(sqft: number): number {
-  return Math.max(sqft * RATE_PER_SQFT, MINIMUM_PRICE);
-}
+type ConfirmedQuote = {
+  price: number;
+  sqft: number;
+  rate: number;
+  minimumApplied: boolean;
+};
 
 const inputClass =
   "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 placeholder:text-slate-400 transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-blue-500/20";
@@ -36,7 +42,7 @@ export function InstantQuoteForm({
   const [sqft, setSqft] = useState("");
   const [state, setState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
-  const [confirmedQuote, setConfirmedQuote] = useState<{ price: number; sqft: number } | null>(null);
+  const [confirmedQuote, setConfirmedQuote] = useState<ConfirmedQuote | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   const propertyLabel = propertyType ? formatPropertyLabel(propertyType) : null;
@@ -53,9 +59,13 @@ export function InstantQuoteForm({
     const entries = Object.fromEntries(formData.entries()) as Record<string, string>;
 
     const sqftNum = parseFloat(sqft);
-    const price = calcPrice(sqftNum);
+    const { price, rate, minimumApplied } = calcQuotePrice(
+      sqftNum,
+      propertyType,
+      serviceId,
+    );
     const priceFormatted = `$${price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    const minimumApplied = sqftNum * RATE_PER_SQFT < MINIMUM_PRICE;
+    const rateFormatted = formatRate(rate);
     const quoteDetails = [
       propertyLabel ? `Property: ${propertyLabel}` : null,
       serviceLabel ? `Service: ${serviceLabel}` : null,
@@ -72,7 +82,7 @@ export function InstantQuoteForm({
       "Property Type": propertyLabel ?? "Not specified",
       Service: serviceLabel ?? "Not specified",
       "Square Footage": `${sqftNum.toLocaleString()} sq ft`,
-      Rate: "$0.35 per sq ft",
+      Rate: rateFormatted,
       "Quoted Price": `${priceFormatted}${minimumApplied ? " (minimum applied)" : ""}`,
       message: [
         quoteDetails,
@@ -83,7 +93,7 @@ export function InstantQuoteForm({
     });
 
     if (result.ok) {
-      setConfirmedQuote({ price, sqft: sqftNum });
+      setConfirmedQuote({ price, sqft: sqftNum, rate, minimumApplied });
       setState("success");
     } else {
       setState("error");
@@ -109,9 +119,10 @@ export function InstantQuoteForm({
           ${confirmedQuote.price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
         </p>
         <p className="mt-2 text-sm text-slate-500">
-          Based on {confirmedQuote.sqft.toLocaleString()} sq ft @ $0.35/sq ft
-          {confirmedQuote.sqft * RATE_PER_SQFT < MINIMUM_PRICE
-            ? ` (minimum $${MINIMUM_PRICE} applies)`
+          Based on {confirmedQuote.sqft.toLocaleString()} sq ft @{" "}
+          {formatRateShort(confirmedQuote.rate)}
+          {confirmedQuote.minimumApplied
+            ? ` (minimum $${RESIDENTIAL_MINIMUM} applies)`
             : ""}
         </p>
         <p className="mt-5 text-slate-600">

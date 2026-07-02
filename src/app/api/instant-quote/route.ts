@@ -1,19 +1,16 @@
 import { NextResponse } from "next/server";
 import { buildEmailHtml, fieldRow, sendNotificationEmail } from "@/lib/email";
+import { calcQuotePrice, formatRate } from "@/lib/quote-pricing";
+import { parsePropertyType } from "@/lib/quote-selection";
 import { getClientIp, isRateLimited } from "@/lib/rate-limit";
-
-const RATE_PER_SQFT = 0.35;
-const MINIMUM_PRICE = 300;
-
-function calcPrice(sqft: number): number {
-  return Math.max(sqft * RATE_PER_SQFT, MINIMUM_PRICE);
-}
 
 type Body = {
   name?: string;
   email?: string;
   phone?: string;
   sqft?: string;
+  property?: string;
+  service?: string;
   website?: string;
 };
 
@@ -64,22 +61,25 @@ export async function POST(request: Request) {
     );
   }
 
-  const price = calcPrice(sqft);
-  const priceFormatted = `$${price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  const minimumApplied = sqft * RATE_PER_SQFT < MINIMUM_PRICE;
+  const price = calcQuotePrice(
+    sqft,
+    parsePropertyType(body.property),
+    body.service ?? null,
+  );
+  const priceFormatted = `$${price.price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   const rows = [
     fieldRow("Name", name),
     fieldRow("Email", email),
     fieldRow("Phone", phone),
     fieldRow("Square Footage", `${sqft.toLocaleString()} sq ft`),
-    fieldRow("Rate", "$0.35 per sq ft"),
-    fieldRow("Quoted Price", `${priceFormatted}${minimumApplied ? " (minimum applied)" : ""}`),
+    fieldRow("Rate", formatRate(price.rate)),
+    fieldRow("Quoted Price", `${priceFormatted}${price.minimumApplied ? " (minimum applied)" : ""}`),
   ].join("");
 
   const result = await sendNotificationEmail(
-    `New Instant Deep Clean Quote — ${name} — ${priceFormatted}`,
-    buildEmailHtml("New Instant Deep Clean Quote", rows),
+    `New Instant Quote — ${name} — ${priceFormatted}`,
+    buildEmailHtml("New Instant Quote", rows),
   );
 
   if (!result.ok) {

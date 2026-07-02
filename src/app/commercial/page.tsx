@@ -100,7 +100,7 @@ export default function CommercialPage() {
         title="Ready to elevate your workspace?"
         description="Get a free commercial cleaning quote. We'll work with your schedule and deliver results your team and clients will notice."
         primaryHref="/book?property=commercial"
-        primaryLabel="Book a Commercial Clean"
+        primaryLabel="Instant Quote"
       />
     </>
   );

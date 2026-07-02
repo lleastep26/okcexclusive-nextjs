@@ -12,7 +12,7 @@ export function CTABanner({
   title = "Ready for an Exclusive Clean?",
   description = "Get a free quote today. Flexible scheduling, transparent pricing, and a team you can trust.",
   primaryHref = "/book",
-  primaryLabel = "Book a Clean",
+  primaryLabel = "Instant Quote",
 }: CTABannerProps) {
   return (
     <section className="section-padding">

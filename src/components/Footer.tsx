@@ -38,14 +38,6 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
-              <li>
-                <Link
-                  href="/book"
-                  className="text-sm text-slate-400 transition-colors hover:text-white"
-                >
-                  Book a Clean
-                </Link>
-              </li>
             </ul>
           </div>
 

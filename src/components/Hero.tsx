@@ -23,7 +23,7 @@ export function Hero() {
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <Button href="/book" size="lg">
-              Get a Quote
+              Instant Quote
             </Button>
             <Button
               href={CONTACT.phoneHref}

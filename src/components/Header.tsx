@@ -62,7 +62,7 @@ function HeaderContent({ pathname }: { pathname: string }) {
             {CONTACT.phone}
           </a>
           <Button href="/book" size="sm">
-            Book a Clean
+            Instant Quote
           </Button>
         </div>
 
@@ -110,7 +110,7 @@ function HeaderContent({ pathname }: { pathname: string }) {
             </a>
             <div className="pt-2">
               <Button href="/book" className="w-full" onClick={closeMenu}>
-                Book a Clean
+                Instant Quote
               </Button>
             </div>
           </nav>

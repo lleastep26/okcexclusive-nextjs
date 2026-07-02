@@ -4,11 +4,15 @@ import { CONTACT } from "@/lib/constants";
 type CTABannerProps = {
   title?: string;
   description?: string;
+  primaryHref?: string;
+  primaryLabel?: string;
 };
 
 export function CTABanner({
   title = "Ready for an Exclusive Clean?",
   description = "Get a free quote today. Flexible scheduling, transparent pricing, and a team you can trust.",
+  primaryHref = "/book",
+  primaryLabel = "Book a Clean",
 }: CTABannerProps) {
   return (
     <section className="section-padding">
@@ -23,8 +27,8 @@ export function CTABanner({
               {description}
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Button href="/book" size="lg">
-                Book a Clean
+              <Button href={primaryHref} size="lg">
+                {primaryLabel}
               </Button>
               <Button
                 href={CONTACT.phoneHref}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { CTABanner } from "@/components/CTABanner";
+import { ServiceSelectionGrid } from "@/components/ServiceSelectionGrid";
 import { commercialContent } from "@/lib/content";
 
 export const metadata: Metadata = {
@@ -59,6 +60,24 @@ export default function CommercialPage() {
       <section className="section-padding bg-white">
         <div className="section-container">
           <div className="mx-auto max-w-2xl text-center">
+            <p className="section-label">Book a Clean</p>
+            <h2 className="section-title mt-3">Choose your commercial service</h2>
+            <p className="section-subtitle mx-auto">
+              Select the type of clean your business needs. You&apos;ll enter your
+              square footage and contact info on the next step for an instant quote.
+            </p>
+          </div>
+          <div className="mx-auto mt-12 max-w-4xl">
+            <div className="card">
+              <ServiceSelectionGrid propertyType="commercial" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section-padding bg-slate-50">
+        <div className="section-container">
+          <div className="mx-auto max-w-2xl text-center">
             <p className="section-label">Why Choose Us</p>
             <h2 className="section-title mt-3">Built for business</h2>
           </div>
@@ -80,6 +99,8 @@ export default function CommercialPage() {
       <CTABanner
         title="Ready to elevate your workspace?"
         description="Get a free commercial cleaning quote. We'll work with your schedule and deliver results your team and clients will notice."
+        primaryHref="/book?property=commercial"
+        primaryLabel="Book a Commercial Clean"
       />
     </>
   );

@@ -2,77 +2,41 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { services } from "@/lib/content";
+import { ServiceSelectionGrid } from "./ServiceSelectionGrid";
+import { type PropertyType } from "@/lib/quote-selection";
 
-type PropertyType = "residential" | "commercial";
+type BookCleanSelectorProps = {
+  initialProperty?: PropertyType | null;
+};
 
-function buildQuoteUrl(property: PropertyType, serviceId?: string) {
-  const params = new URLSearchParams({ property });
-  if (serviceId) params.set("service", serviceId);
-  return `/instant-quote?${params.toString()}`;
-}
-
-export function BookCleanSelector() {
+export function BookCleanSelector({ initialProperty = null }: BookCleanSelectorProps) {
   const router = useRouter();
-  const [step, setStep] = useState<"property" | "service">("property");
-  const [propertyType, setPropertyType] = useState<PropertyType | null>(null);
+  const [step, setStep] = useState<"property" | "service">(
+    initialProperty ? "service" : "property",
+  );
+  const [propertyType, setPropertyType] = useState<PropertyType | null>(initialProperty);
 
   function handlePropertySelect(type: PropertyType) {
     setPropertyType(type);
-    if (type === "commercial") {
-      router.push(buildQuoteUrl("commercial"));
-      return;
-    }
     setStep("service");
   }
 
-  function handleServiceSelect(serviceId: string) {
-    if (propertyType !== "residential") return;
-    router.push(buildQuoteUrl("residential", serviceId));
-  }
-
-  if (step === "service" && propertyType === "residential") {
+  if (step === "service" && propertyType) {
     return (
-      <div className="space-y-6">
-        <button
-          type="button"
-          onClick={() => {
-            setStep("property");
-            setPropertyType(null);
-          }}
-          className="text-sm font-medium text-slate-500 transition-colors hover:text-slate-950"
-        >
-          ← Back to property type
-        </button>
-
-        <div>
-          <h2 className="font-display text-xl font-semibold text-slate-950">
-            What type of clean do you need?
-          </h2>
-          <p className="mt-2 text-sm text-slate-600">
-            Choose the service that best fits your home. You&apos;ll enter your
-            square footage and contact info on the next step.
-          </p>
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          {services.map((service) => (
-            <button
-              key={service.id}
-              type="button"
-              onClick={() => handleServiceSelect(service.id)}
-              className="rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:border-accent hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-            >
-              <span className="font-display text-lg font-semibold text-slate-950">
-                {service.title}
-              </span>
-              <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                {service.description}
-              </p>
-            </button>
-          ))}
-        </div>
-      </div>
+      <ServiceSelectionGrid
+        propertyType={propertyType}
+        onBack={() => {
+          if (initialProperty) {
+            router.push("/book");
+            return;
+          }
+          setStep("property");
+          setPropertyType(null);
+        }}
+        backLabel={
+          initialProperty ? "← Change property type" : "← Back to property type"
+        }
+      />
     );
   }
 

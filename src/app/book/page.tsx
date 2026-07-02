@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { BookCleanSelector } from "@/components/BookCleanSelector";
 import { CheckCircleIcon } from "@/components/Icons";
+import { parsePropertyType } from "@/lib/quote-selection";
 
 export const metadata: Metadata = {
   title: "Book a Clean",
@@ -14,7 +15,14 @@ const highlights = [
   "100% satisfaction guarantee",
 ];
 
-export default function BookPage() {
+type BookPageProps = {
+  searchParams: Promise<{ property?: string }>;
+};
+
+export default async function BookPage({ searchParams }: BookPageProps) {
+  const params = await searchParams;
+  const initialProperty = parsePropertyType(params.property);
+
   return (
     <section className="section-padding bg-slate-50">
       <div className="section-container">
@@ -43,7 +51,7 @@ export default function BookPage() {
 
           <div className="lg:col-span-3">
             <div className="card">
-              <BookCleanSelector />
+              <BookCleanSelector initialProperty={initialProperty} />
             </div>
           </div>
         </div>

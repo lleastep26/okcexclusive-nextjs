@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 const highlights = [
   "Residential and commercial cleaning",
-  "Quick quote request — we'll follow up personally",
+  "Instant pricing after a few quick questions",
   "100% satisfaction guarantee",
 ];
 
@@ -32,8 +32,8 @@ export default async function BookPage({ searchParams }: BookPageProps) {
             <h1 className="section-title mt-3">Let&apos;s get started</h1>
             <p className="section-subtitle">
               Tell us about your property and the type of clean you need. We&apos;ll
-              take you to a short form to share your square footage and contact
-              info — then our team will follow up with your quote.
+              take you to a short form — enter your square footage and contact info
+              to get your instant quote.
             </p>
 
             <ul className="mt-8 space-y-3">

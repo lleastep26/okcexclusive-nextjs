@@ -72,3 +72,11 @@ export function calcQuotePrice(
 export function formatRate(rate: number): string {
   return `$${rate.toFixed(2)} per sq ft`;
 }
+
+export function formatRateShort(rate: number): string {
+  return `$${rate.toFixed(2)}/sq ft`;
+}
+
+export function formatPrice(price: number): string {
+  return `$${price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}

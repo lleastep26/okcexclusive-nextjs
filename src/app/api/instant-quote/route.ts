@@ -81,8 +81,8 @@ export async function POST(request: Request) {
   ].join("");
 
   const result = await sendNotificationEmail(
-    `New Quote Request — ${name} — ${priceFormatted}`,
-    buildEmailHtml("New Quote Request", rows),
+    `New Instant Quote — ${name} — ${priceFormatted}`,
+    buildEmailHtml("New Instant Quote", rows),
   );
 
   if (!result.ok) {

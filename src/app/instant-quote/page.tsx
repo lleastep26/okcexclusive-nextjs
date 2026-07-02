@@ -9,13 +9,13 @@ import {
 } from "@/lib/quote-selection";
 
 export const metadata: Metadata = {
-  title: "Request a Quote",
+  title: "Instant Quote",
   description:
-    "Request a cleaning quote from Exclusive Cleaning Services. Tell us about your space and we'll follow up with pricing and scheduling.",
+    "Get an instant cleaning quote from Exclusive Cleaning Services. Enter your square footage and contact info to see your price right away.",
 };
 
 const highlights = [
-  "Quick and easy — takes just a few minutes",
+  "Instant pricing — no waiting",
   "We'll follow up to confirm your appointment",
 ];
 
@@ -33,12 +33,12 @@ export default async function InstantQuotePage({ searchParams }: InstantQuotePag
       <div className="section-container">
         <div className="grid gap-12 lg:grid-cols-5">
           <div className="lg:col-span-2">
-            <p className="section-label">Request a Quote</p>
-            <h1 className="section-title mt-3">Tell us about your space</h1>
+            <p className="section-label">Instant Quote</p>
+            <h1 className="section-title mt-3">Get your instant quote</h1>
             <p className="section-subtitle">
-              Enter your square footage and contact info. Our team will review
-              your request and reach out with a personalized quote and scheduling
-              options.
+              Enter your square footage and contact info to see your price right
+              away — no waiting, no back-and-forth. We&apos;ll reach out to
+              confirm your appointment.
             </p>
 
             {(propertyType || serviceLabel) && (

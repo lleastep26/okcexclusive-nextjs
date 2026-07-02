@@ -63,9 +63,8 @@ export default function CommercialPage() {
             <p className="section-label">Book a Clean</p>
             <h2 className="section-title mt-3">Choose your commercial service</h2>
             <p className="section-subtitle mx-auto">
-              Select the type of clean your business needs. You&apos;ll share your
-              square footage and contact info on the next step, and our team will
-              follow up with your quote.
+              Select the type of clean your business needs. You&apos;ll enter your
+              square footage and contact info on the next step for an instant quote.
             </p>
           </div>
           <div className="mx-auto mt-12 max-w-4xl">

@@ -124,3 +124,48 @@ export const serviceOptions = services.map((s) => ({
   value: s.id,
   label: s.title,
 }));
+
+export const commercialContent = {
+  headline: "Professional cleaning for your business",
+  paragraphs: [
+    "First impressions matter — and a clean workspace tells clients and employees that you take pride in what you do. Exclusive Cleaning Services delivers reliable, high-quality commercial cleaning tailored to your facility, schedule, and standards.",
+    "From offices and retail spaces to medical facilities and property turnovers, we work around your hours so operations stay uninterrupted. Our trained team follows detailed checklists and uses eco-friendly products that are safe for staff and visitors alike.",
+    "Based in Oklahoma City, we partner with businesses throughout the metro and surrounding areas for one-time deep cleans, recurring maintenance, and post-construction cleanup.",
+  ],
+  services: [
+    {
+      title: "Office Cleaning",
+      description:
+        "Desks, common areas, restrooms, and break rooms kept spotless on a schedule that fits your team.",
+    },
+    {
+      title: "Retail & Showroom",
+      description:
+        "Customer-facing spaces that look polished and inviting — floors, fixtures, and high-touch surfaces included.",
+    },
+    {
+      title: "Medical & Professional",
+      description:
+        "Thorough, detail-oriented cleaning for clinics, salons, and professional offices with attention to hygiene standards.",
+    },
+    {
+      title: "Post-Construction",
+      description:
+        "Dust, debris, and fine particles removed so your newly finished commercial space is ready to open.",
+    },
+  ],
+  benefits: [
+    {
+      title: "Flexible Scheduling",
+      description: "After-hours and weekend cleans available so your business never skips a beat.",
+    },
+    {
+      title: "Consistent Quality",
+      description: "The same trained professionals and checklists every visit — no surprises, no shortcuts.",
+    },
+    {
+      title: "Transparent Pricing",
+      description: "Custom quotes based on your square footage and needs. No hidden fees or upselling.",
+    },
+  ],
+} as const;

@@ -3,7 +3,12 @@ import type { PropertyType } from "./quote-selection";
 
 export type ServiceId = (typeof services)[number]["id"];
 
-const RESIDENTIAL_RATE = 0.35;
+const RESIDENTIAL_RATES: Record<ServiceId, number> = {
+  "deep-clean": 0.2,
+  "maintenance-clean": 0.12,
+  "post-construction": 0.35,
+  "one-time": 0.2,
+};
 
 const COMMERCIAL_RATES: Record<ServiceId, number> = {
   "deep-clean": 0.25,
@@ -31,11 +36,16 @@ export function getQuoteRate(
   propertyType: PropertyType | null,
   serviceId: string | null | undefined,
 ): number {
-  if (propertyType === "commercial" && isServiceId(serviceId)) {
-    return COMMERCIAL_RATES[serviceId];
+  if (isServiceId(serviceId)) {
+    if (propertyType === "commercial") {
+      return COMMERCIAL_RATES[serviceId];
+    }
+    return RESIDENTIAL_RATES[serviceId];
   }
 
-  return RESIDENTIAL_RATE;
+  return propertyType === "commercial"
+    ? COMMERCIAL_RATES["deep-clean"]
+    : RESIDENTIAL_RATES["deep-clean"];
 }
 
 export function calcQuotePrice(

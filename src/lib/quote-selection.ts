@@ -52,6 +52,22 @@ export function formatPropertyLabel(propertyType: PropertyType) {
   return propertyType === "residential" ? "Residential" : "Commercial";
 }
 
+export function parseServiceId(value: string | undefined): string | null {
+  if (!value) return null;
+  return services.some((service) => service.id === value) ? value : null;
+}
+
+export function buildBookUrl(options?: {
+  property?: PropertyType;
+  service?: string;
+}) {
+  const params = new URLSearchParams();
+  if (options?.property) params.set("property", options.property);
+  if (options?.service) params.set("service", options.service);
+  const query = params.toString();
+  return query ? `/book?${query}` : "/book";
+}
+
 export function buildQuoteUrl(
   property: PropertyType,
   serviceId: string,

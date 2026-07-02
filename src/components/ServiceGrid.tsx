@@ -1,25 +1,35 @@
+import Link from "next/link";
 import { serviceIcons } from "./Icons";
 import { services } from "@/lib/content";
+import { buildBookUrl } from "@/lib/quote-selection";
+
+const cardClass =
+  "group flex gap-5 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition-all hover:border-accent hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
 
 function ServiceCard({
+  href,
   title,
   description,
   icon: Icon,
 }: {
+  href: string;
   title: string;
   description: string;
   icon: (typeof serviceIcons)[number];
 }) {
   return (
-    <article className="group flex gap-5 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
+    <Link href={href} className={cardClass}>
       <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-accent transition-colors group-hover:bg-accent group-hover:text-white">
         <Icon className="h-6 w-6" />
       </div>
       <div>
         <h3 className="font-display text-lg font-semibold text-slate-950">{title}</h3>
         <p className="mt-1.5 text-sm leading-relaxed text-slate-600">{description}</p>
+        <p className="mt-3 text-sm font-medium text-accent group-hover:underline">
+          Get instant quote →
+        </p>
       </div>
-    </article>
+    </Link>
   );
 }
 
@@ -39,6 +49,7 @@ export function ServiceGrid() {
           {services.map((service, index) => (
             <ServiceCard
               key={service.id}
+              href={buildBookUrl({ service: service.id })}
               title={service.title}
               description={service.description}
               icon={serviceIcons[index]}

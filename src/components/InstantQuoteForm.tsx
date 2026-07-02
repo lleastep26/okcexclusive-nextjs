@@ -3,12 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useState, useRef } from "react";
 import { Button } from "./Button";
-import {
-  calcQuotePrice,
-  formatRate,
-  formatRateShort,
-  RESIDENTIAL_MINIMUM,
-} from "@/lib/quote-pricing";
+import { calcQuotePrice, formatRate } from "@/lib/quote-pricing";
 import {
   formatPropertyLabel,
   getServiceLabel,
@@ -23,13 +18,6 @@ type InstantQuoteFormProps = {
   serviceId?: string | null;
 };
 
-type ConfirmedQuote = {
-  price: number;
-  sqft: number;
-  rate: number;
-  minimumApplied: boolean;
-};
-
 const inputClass =
   "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 placeholder:text-slate-400 transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-blue-500/20";
 
@@ -42,7 +30,6 @@ export function InstantQuoteForm({
   const [sqft, setSqft] = useState("");
   const [state, setState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
-  const [confirmedQuote, setConfirmedQuote] = useState<ConfirmedQuote | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   const propertyLabel = propertyType ? formatPropertyLabel(propertyType) : null;
@@ -59,7 +46,7 @@ export function InstantQuoteForm({
     const entries = Object.fromEntries(formData.entries()) as Record<string, string>;
 
     const sqftNum = parseFloat(sqft);
-    const { price, rate, minimumApplied } = calcQuotePrice(
+    const { price, rate, minimumApplied, minimum } = calcQuotePrice(
       sqftNum,
       propertyType,
       serviceId,
@@ -74,7 +61,7 @@ export function InstantQuoteForm({
       .join(" · ");
 
     const result = await submitToWeb3Forms({
-      subject: `New Instant Quote — ${entries.name ?? ""} — ${priceFormatted}`,
+      subject: `New Quote Request — ${entries.name ?? ""} — ${priceFormatted}`,
       from_name: entries.name ?? "",
       name: entries.name ?? "",
       email: entries.email ?? "",
@@ -83,17 +70,16 @@ export function InstantQuoteForm({
       Service: serviceLabel ?? "Not specified",
       "Square Footage": `${sqftNum.toLocaleString()} sq ft`,
       Rate: rateFormatted,
-      "Quoted Price": `${priceFormatted}${minimumApplied ? " (minimum applied)" : ""}`,
+      "Quoted Price": `${priceFormatted}${minimumApplied && minimum ? ` (minimum $${minimum} applied)` : ""}`,
       message: [
         quoteDetails,
-        `Quote for ${sqftNum.toLocaleString()} sq ft: ${priceFormatted}${minimumApplied ? " (minimum applied)" : ""}`,
+        `Quote for ${sqftNum.toLocaleString()} sq ft: ${priceFormatted}${minimumApplied && minimum ? ` (minimum $${minimum} applied)` : ""}`,
       ]
         .filter(Boolean)
         .join("\n"),
     });
 
     if (result.ok) {
-      setConfirmedQuote({ price, sqft: sqftNum, rate, minimumApplied });
       setState("success");
     } else {
       setState("error");
@@ -101,32 +87,23 @@ export function InstantQuoteForm({
     }
   }
 
-  if (state === "success" && confirmedQuote !== null) {
+  if (state === "success") {
     return (
       <div
         className="rounded-2xl border border-blue-200 bg-blue-50 p-8 text-center"
         role="status"
       >
         <p className="text-sm font-semibold uppercase tracking-widest text-accent">
-          Your Instant Quote
+          Request Received
         </p>
         {(propertyLabel || serviceLabel) && (
           <p className="mt-2 text-sm text-slate-600">
             {[propertyLabel, serviceLabel].filter(Boolean).join(" · ")}
           </p>
         )}
-        <p className="mt-3 font-display text-5xl font-bold text-slate-950">
-          ${confirmedQuote.price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-        </p>
-        <p className="mt-2 text-sm text-slate-500">
-          Based on {confirmedQuote.sqft.toLocaleString()} sq ft @{" "}
-          {formatRateShort(confirmedQuote.rate)}
-          {confirmedQuote.minimumApplied
-            ? ` (minimum $${RESIDENTIAL_MINIMUM} applies)`
-            : ""}
-        </p>
         <p className="mt-5 text-slate-600">
-          We&apos;ve received your info and will reach out shortly to confirm your appointment.
+          We&apos;ve received your info and will reach out shortly with your quote
+          and to confirm your appointment.
         </p>
         <Button
           type="button"
@@ -135,11 +112,10 @@ export function InstantQuoteForm({
           onClick={() => {
             setState("idle");
             setSqft("");
-            setConfirmedQuote(null);
             formRef.current?.reset();
           }}
         >
-          Get another quote
+          Submit another request
         </Button>
       </div>
     );
@@ -243,7 +219,7 @@ export function InstantQuoteForm({
       )}
 
       <Button type="submit" size="lg" disabled={state === "submitting"}>
-        {state === "submitting" ? "Getting your quote…" : "Get My Instant Quote"}
+        {state === "submitting" ? "Submitting…" : "Request a Quote"}
       </Button>
     </form>
   );

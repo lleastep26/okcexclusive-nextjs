@@ -4,7 +4,6 @@ import type { PropertyType } from "./quote-selection";
 export type ServiceId = (typeof services)[number]["id"];
 
 const RESIDENTIAL_RATE = 0.35;
-const RESIDENTIAL_MINIMUM = 300;
 
 const COMMERCIAL_RATES: Record<ServiceId, number> = {
   "deep-clean": 0.25,
@@ -13,8 +12,19 @@ const COMMERCIAL_RATES: Record<ServiceId, number> = {
   "one-time": 0.15,
 };
 
+const SERVICE_MINIMUMS: Partial<Record<ServiceId, number>> = {
+  "deep-clean": 300,
+  "post-construction": 300,
+  "one-time": 200,
+};
+
 function isServiceId(value: string | null | undefined): value is ServiceId {
   return !!value && services.some((service) => service.id === value);
+}
+
+function getServiceMinimum(serviceId: string | null | undefined): number | null {
+  if (!isServiceId(serviceId)) return null;
+  return SERVICE_MINIMUMS[serviceId] ?? null;
 }
 
 export function getQuoteRate(
@@ -32,28 +42,23 @@ export function calcQuotePrice(
   sqft: number,
   propertyType: PropertyType | null,
   serviceId: string | null | undefined,
-): { price: number; rate: number; minimumApplied: boolean } {
+): { price: number; rate: number; minimumApplied: boolean; minimum: number | null } {
   const rate = getQuoteRate(propertyType, serviceId);
   const calculated = sqft * rate;
+  const minimum = getServiceMinimum(serviceId);
 
-  if (propertyType === "commercial") {
-    return { price: calculated, rate, minimumApplied: false };
+  if (minimum === null) {
+    return { price: calculated, rate, minimumApplied: false, minimum: null };
   }
 
-  const price = Math.max(calculated, RESIDENTIAL_MINIMUM);
   return {
-    price,
+    price: Math.max(calculated, minimum),
     rate,
-    minimumApplied: calculated < RESIDENTIAL_MINIMUM,
+    minimumApplied: calculated < minimum,
+    minimum,
   };
 }
 
 export function formatRate(rate: number): string {
   return `$${rate.toFixed(2)} per sq ft`;
 }
-
-export function formatRateShort(rate: number): string {
-  return `$${rate.toFixed(2)}/sq ft`;
-}
-
-export { RESIDENTIAL_MINIMUM };

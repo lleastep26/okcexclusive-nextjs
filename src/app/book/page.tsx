@@ -6,12 +6,12 @@ import { parsePropertyType } from "@/lib/quote-selection";
 export const metadata: Metadata = {
   title: "Book a Clean",
   description:
-    "Book a cleaning with Exclusive Cleaning Services. Choose your property type and service, then get an instant quote for your space.",
+    "Book a cleaning with Exclusive Cleaning Services. Choose your property type and service, then tell us about your space.",
 };
 
 const highlights = [
   "Residential and commercial cleaning",
-  "Instant pricing after a few quick questions",
+  "Quick quote request — we'll follow up personally",
   "100% satisfaction guarantee",
 ];
 
@@ -32,8 +32,8 @@ export default async function BookPage({ searchParams }: BookPageProps) {
             <h1 className="section-title mt-3">Let&apos;s get started</h1>
             <p className="section-subtitle">
               Tell us about your property and the type of clean you need. We&apos;ll
-              take you to an instant quote — enter your square footage and contact
-              info to see your price right away.
+              take you to a short form to share your square footage and contact
+              info — then our team will follow up with your quote.
             </p>
 
             <ul className="mt-8 space-y-3">

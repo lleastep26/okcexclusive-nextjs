@@ -61,25 +61,28 @@ export async function POST(request: Request) {
     );
   }
 
-  const price = calcQuotePrice(
+  const quote = calcQuotePrice(
     sqft,
     parsePropertyType(body.property),
     body.service ?? null,
   );
-  const priceFormatted = `$${price.price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const priceFormatted = `$${quote.price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   const rows = [
     fieldRow("Name", name),
     fieldRow("Email", email),
     fieldRow("Phone", phone),
     fieldRow("Square Footage", `${sqft.toLocaleString()} sq ft`),
-    fieldRow("Rate", formatRate(price.rate)),
-    fieldRow("Quoted Price", `${priceFormatted}${price.minimumApplied ? " (minimum applied)" : ""}`),
+    fieldRow("Rate", formatRate(quote.rate)),
+    fieldRow(
+      "Quoted Price",
+      `${priceFormatted}${quote.minimumApplied && quote.minimum ? ` (minimum $${quote.minimum} applied)` : ""}`,
+    ),
   ].join("");
 
   const result = await sendNotificationEmail(
-    `New Instant Quote — ${name} — ${priceFormatted}`,
-    buildEmailHtml("New Instant Quote", rows),
+    `New Quote Request — ${name} — ${priceFormatted}`,
+    buildEmailHtml("New Quote Request", rows),
   );
 
   if (!result.ok) {

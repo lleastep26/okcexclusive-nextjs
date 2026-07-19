@@ -104,7 +104,14 @@ export function Footer() {
         </div>
 
         <div className="mt-12 border-t border-white/10 pt-8 text-center text-sm text-slate-500">
-          &copy; {year} {SITE_NAME}. All rights reserved.
+          <p>
+            &copy; {year} {SITE_NAME}. All rights reserved.
+          </p>
+          <p className="mt-2">
+            <Link href="/privacy" className="transition-colors hover:text-white">
+              Privacy Policy
+            </Link>
+          </p>
         </div>
       </div>
     </footer>

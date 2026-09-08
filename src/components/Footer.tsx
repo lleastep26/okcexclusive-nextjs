@@ -105,7 +105,8 @@ export function Footer() {
 
         <div className="mt-12 border-t border-white/10 pt-8 text-center text-sm text-slate-500">
           <p>
-            &copy; {year} {SITE_NAME}. All rights reserved.
+            Copyright {year}, OKC Exclusive Cleaning. OKC Exclusive Cleaning is owned and
+            operated by Eastep Industries.
           </p>
           <p className="mt-2">
             <Link href="/privacy" className="transition-colors hover:text-white">

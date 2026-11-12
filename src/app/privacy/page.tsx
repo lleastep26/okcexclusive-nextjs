@@ -1,68 +1,86 @@
 import type { Metadata } from "next";
-import { SITE_NAME } from "@/lib/constants";
+import Link from "next/link";
+import { CONTACT, SITE_NAME, SITE_URL } from "@/lib/constants";
+import { privacyPolicy } from "@/lib/privacy-content";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: `${SITE_NAME}'s privacy policy, including how we use your phone number for text messages.`,
+  description: `Privacy Policy for ${SITE_NAME}. Learn how we collect, use, and protect your information when you visit our website or use our services.`,
+  robots: { index: true, follow: true },
 };
 
 export default function PrivacyPage() {
   return (
     <section className="section-padding bg-white">
-      <div className="section-container max-w-3xl">
-        <p className="section-label">Privacy Policy</p>
-        <h1 className="section-title mt-3">How we handle your information</h1>
+      <div className="section-container">
+        <div className="mx-auto max-w-3xl">
+          <p className="section-label">Legal</p>
+          <h1 className="section-title mt-3">Privacy Policy</h1>
+          <p className="mt-4 text-sm text-slate-500">
+            Effective date: {privacyPolicy.effectiveDate} · Last updated:{" "}
+            {privacyPolicy.lastUpdated}
+          </p>
 
-        <div className="mt-8 space-y-8 text-slate-600 leading-relaxed">
-          <div>
-            <h2 className="font-display text-xl font-semibold text-slate-950">
-              What we collect
-            </h2>
-            <p className="mt-3">
-              When you request a quote, book a service, or contact us, we collect the
-              information you provide — your name, phone number, email address, service
-              address, and details about the job you&apos;re asking about.
-            </p>
-          </div>
+          <div className="mt-10 space-y-10 text-slate-600 leading-relaxed">
+            {privacyPolicy.sections.map((section) => (
+              <section key={section.title}>
+                <h2 className="font-display text-2xl font-semibold text-slate-950">
+                  {section.title}
+                </h2>
 
-          <div>
-            <h2 className="font-display text-xl font-semibold text-slate-950">
-              Text messages (SMS)
-            </h2>
-            <p className="mt-3">
-              If you provide your phone number, {SITE_NAME} may send you text messages
-              about your request, appointments, job updates, and review requests. Message
-              frequency varies. Message and data rates may apply. Reply STOP at any time
-              to opt out of text messages, or reply HELP for help.
-            </p>
-            <p className="mt-3 font-medium text-slate-950">
-              We do not share or sell your mobile number or SMS consent with third parties
-              for marketing purposes.
-            </p>
-          </div>
+                {"paragraphs" in section &&
+                  section.paragraphs?.map((paragraph) => (
+                    <p key={paragraph.slice(0, 48)} className="mt-4">
+                      {paragraph}
+                    </p>
+                  ))}
 
-          <div>
-            <h2 className="font-display text-xl font-semibold text-slate-950">
-              How we use your information
-            </h2>
-            <p className="mt-3">
-              We use your information to respond to your request, schedule and complete
-              your service, send appointment and job updates, follow up after a job is
-              finished, and request a review. We do not sell your personal information.
-            </p>
-          </div>
+                {"list" in section && section.list && (
+                  <ul className="mt-4 list-disc space-y-2 pl-6">
+                    {section.list.map((item) => (
+                      <li key={item.slice(0, 48)}>{item}</li>
+                    ))}
+                  </ul>
+                )}
 
-          <div>
-            <h2 className="font-display text-xl font-semibold text-slate-950">
-              Contact us
-            </h2>
-            <p className="mt-3">
-              Questions about this policy or your information? Reach out through our{" "}
-              <a href="/contact" className="underline">
-                contact page
-              </a>
-              .
-            </p>
+                {"paragraphsAfter" in section &&
+                  section.paragraphsAfter?.map((paragraph) => (
+                    <p key={paragraph.slice(0, 48)} className="mt-4">
+                      {paragraph}
+                    </p>
+                  ))}
+
+                {"contact" in section && section.contact && (
+                  <ul className="mt-4 space-y-2">
+                    <li>
+                      <span className="font-medium text-slate-950">{SITE_NAME}</span>
+                    </li>
+                    <li>
+                      Website:{" "}
+                      <Link href="/" className="text-accent hover:underline">
+                        {SITE_URL}
+                      </Link>
+                    </li>
+                    <li>
+                      Email:{" "}
+                      <a
+                        href={`mailto:${CONTACT.email}`}
+                        className="text-accent hover:underline"
+                      >
+                        {CONTACT.email}
+                      </a>
+                    </li>
+                    <li>
+                      Phone:{" "}
+                      <a href={CONTACT.phoneHref} className="text-accent hover:underline">
+                        {CONTACT.phone}
+                      </a>
+                    </li>
+                    <li>{CONTACT.area}</li>
+                  </ul>
+                )}
+              </section>
+            ))}
           </div>
         </div>
       </div>

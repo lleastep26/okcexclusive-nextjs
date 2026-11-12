@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { Button } from "./Button";
+import { SmsConsentDisclosure } from "./SmsConsentDisclosure";
 import { submitToWeb3Forms } from "@/lib/web3forms";
 
 type FormState = "idle" | "submitting" | "success" | "error";
@@ -137,6 +138,8 @@ export function ContactForm() {
           {errorMessage}
         </p>
       )}
+
+      <SmsConsentDisclosure />
 
       <Button type="submit" size="lg" disabled={state === "submitting"}>
         {state === "submitting" ? "Sending..." : "Send Message"}

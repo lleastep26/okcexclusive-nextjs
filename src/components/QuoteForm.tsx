@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { Button } from "./Button";
+import { SmsConsentDisclosure } from "./SmsConsentDisclosure";
 import { serviceOptions } from "@/lib/content";
 import { submitToWeb3Forms } from "@/lib/web3forms";
 
@@ -220,6 +221,8 @@ export function QuoteForm() {
           {errorMessage}
         </p>
       )}
+
+      <SmsConsentDisclosure />
 
       <Button type="submit" size="lg" disabled={state === "submitting"}>
         {state === "submitting" ? "Sending..." : "Request a Quote"}

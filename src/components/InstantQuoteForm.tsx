@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useState, useRef } from "react";
 import { Button } from "./Button";
+import { SmsConsentDisclosure } from "./SmsConsentDisclosure";
 import {
   calcQuotePrice,
   formatPrice,
@@ -263,6 +264,8 @@ export function InstantQuoteForm({
           {errorMessage}
         </p>
       )}
+
+      <SmsConsentDisclosure />
 
       <Button type="submit" size="lg" disabled={state === "submitting"}>
         {state === "submitting" ? "Getting your quote…" : "Get My Instant Quote"}

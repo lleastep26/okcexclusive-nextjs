@@ -103,8 +103,13 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-white/10 pt-8 text-center text-sm text-slate-500">
-          &copy; {year} {SITE_NAME}. All rights reserved.
+        <div className="mt-12 flex flex-col items-center gap-2 border-t border-white/10 pt-8 text-center text-sm text-slate-500">
+          <span>
+            &copy; {year} {SITE_NAME}. All rights reserved.
+          </span>
+          <Link href="/privacy" className="transition-colors hover:text-white">
+            Privacy Policy
+          </Link>
         </div>
       </div>
     </footer>

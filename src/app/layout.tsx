@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Sans, Fraunces } from "next/font/google";
+import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
@@ -86,6 +87,12 @@ export default function RootLayout({
         <main className="flex-1">{children}</main>
         <Footer />
         <Analytics />
+        {/* Sitewyre website chat. The portal looks the business up by this
+            site's domain and shows nothing unless chat is switched on there. */}
+        <Script
+          src="https://sitewyre-client-portal.vercel.app/widget.js"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );

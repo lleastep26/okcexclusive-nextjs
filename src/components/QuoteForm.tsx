@@ -19,13 +19,21 @@ export function QuoteForm() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const form = event.currentTarget;
+    // The form turns off the browser's automatic checks, so run them here:
+    // every field marked required must be filled.
+    if (!form.reportValidity()) return;
+
+    const formData = new FormData(form);
+    const entries = Object.fromEntries(formData.entries()) as Record<string, string>;
+    if ((entries.phone ?? "").replace(/\D/g, "").length < 10) {
+      setState("error");
+      setErrorMessage("Please enter a phone number with area code.");
+      return;
+    }
+
     setState("submitting");
     setErrorMessage("");
-
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-
-    const entries = Object.fromEntries(formData.entries()) as Record<string, string>;
     const serviceLabel = serviceOptions.find((o) => o.value === entries.service)?.label ?? entries.service ?? "";
     const details = [
       serviceLabel ? `Service: ${serviceLabel}` : null,

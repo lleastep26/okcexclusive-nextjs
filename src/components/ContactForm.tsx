@@ -18,13 +18,21 @@ export function ContactForm() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const form = event.currentTarget;
+    // The form turns off the browser's automatic checks, so run them here:
+    // every field marked required (name, email, phone, message) must be filled.
+    if (!form.reportValidity()) return;
+
+    const formData = new FormData(form);
+    const entries = Object.fromEntries(formData.entries()) as Record<string, string>;
+    if ((entries.phone ?? "").replace(/\D/g, "").length < 10) {
+      setState("error");
+      setErrorMessage("Please enter a phone number with area code.");
+      return;
+    }
+
     setState("submitting");
     setErrorMessage("");
-
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-
-    const entries = Object.fromEntries(formData.entries()) as Record<string, string>;
     const result = await submitLead(
       {
         subject: `New Contact Message — ${entries.name ?? ""}`,
@@ -117,12 +125,13 @@ export function ContactForm() {
 
       <div>
         <label htmlFor="contact-phone" className={labelClass}>
-          Phone
+          Phone *
         </label>
         <input
           id="contact-phone"
           name="phone"
           type="tel"
+          required
           autoComplete="tel"
           className={inputClass}
         />

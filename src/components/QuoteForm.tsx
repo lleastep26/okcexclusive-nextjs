@@ -4,7 +4,7 @@ import { FormEvent, useState } from "react";
 import { Button } from "./Button";
 import { SmsConsentDisclosure } from "./SmsConsentDisclosure";
 import { serviceOptions } from "@/lib/content";
-import { submitToWeb3Forms } from "@/lib/web3forms";
+import { submitLead } from "@/lib/portal-leads";
 
 type FormState = "idle" | "submitting" | "success" | "error";
 
@@ -27,12 +27,31 @@ export function QuoteForm() {
 
     const entries = Object.fromEntries(formData.entries()) as Record<string, string>;
     const serviceLabel = serviceOptions.find((o) => o.value === entries.service)?.label ?? entries.service ?? "";
-    const result = await submitToWeb3Forms({
-      subject: `New Quote Request — ${entries.name ?? ""}`,
-      from_name: entries.name ?? "",
-      ...entries,
-      service: serviceLabel,
-    });
+    const details = [
+      serviceLabel ? `Service: ${serviceLabel}` : null,
+      entries.address ? `Address: ${entries.address}` : null,
+      entries.bedrooms ? `Bedrooms: ${entries.bedrooms}` : null,
+      entries.bathrooms ? `Bathrooms: ${entries.bathrooms}` : null,
+      entries.sqft ? `Square footage: ${entries.sqft}` : null,
+      entries.preferredDate ? `Preferred date: ${entries.preferredDate}` : null,
+      entries.notes ? `Notes: ${entries.notes}` : null,
+    ].filter(Boolean);
+    const result = await submitLead(
+      {
+        subject: `New Quote Request — ${entries.name ?? ""}`,
+        from_name: entries.name ?? "",
+        ...entries,
+        service: serviceLabel,
+      },
+      {
+        name: entries.name ?? "",
+        phone: entries.phone ?? "",
+        email: entries.email,
+        message: ["Quote request", ...details].join("\n"),
+        service: serviceLabel || undefined,
+        honeypot: entries.website,
+      },
+    );
 
     if (result.ok) {
       setState("success");

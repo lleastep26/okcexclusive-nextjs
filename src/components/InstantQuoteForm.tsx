@@ -20,7 +20,7 @@ import {
   type MaintenanceFrequency,
   type PropertyType,
 } from "@/lib/quote-selection";
-import { submitToWeb3Forms } from "@/lib/web3forms";
+import { submitLead } from "@/lib/portal-leads";
 
 type FormState = "idle" | "submitting" | "success" | "error";
 
@@ -87,26 +87,46 @@ export function InstantQuoteForm({
       .filter(Boolean)
       .join(" · ");
 
-    const result = await submitToWeb3Forms({
-      subject: `New Instant Quote — ${entries.name ?? ""} — ${priceFormatted}${quote.isMaintenanceMonthly ? "/mo" : ""}`,
-      from_name: entries.name ?? "",
-      name: entries.name ?? "",
-      email: entries.email ?? "",
-      phone: entries.phone ?? "",
-      "Property Type": propertyLabel ?? "Not specified",
-      Service: serviceLabel ?? "Not specified",
-      Frequency: frequencyLabel ?? "Not specified",
-      "Square Footage": `${sqftNum.toLocaleString()} sq ft`,
-      Rate: rateFormatted,
-      "Visits Per Month": quote.visitsPerMonth?.toString() ?? "N/A",
-      "Per Visit Price": quote.perVisitPrice ? formatPrice(quote.perVisitPrice) : "N/A",
-      "Quoted Price": quote.isMaintenanceMonthly
-        ? `${priceFormatted} per month`
-        : `${priceFormatted}${quote.minimumApplied && quote.minimum ? ` (minimum $${quote.minimum} applied)` : ""}`,
-      message: [quoteDetails, formatQuoteEmailDetails(quote, sqftNum)]
-        .filter(Boolean)
-        .join("\n"),
-    });
+    const quotedPrice = quote.isMaintenanceMonthly
+      ? `${priceFormatted} per month`
+      : `${priceFormatted}${quote.minimumApplied && quote.minimum ? ` (minimum $${quote.minimum} applied)` : ""}`;
+    const emailMessage = [quoteDetails, formatQuoteEmailDetails(quote, sqftNum)]
+      .filter(Boolean)
+      .join("\n");
+
+    const result = await submitLead(
+      {
+        subject: `New Instant Quote — ${entries.name ?? ""} — ${priceFormatted}${quote.isMaintenanceMonthly ? "/mo" : ""}`,
+        from_name: entries.name ?? "",
+        name: entries.name ?? "",
+        email: entries.email ?? "",
+        phone: entries.phone ?? "",
+        "Property Type": propertyLabel ?? "Not specified",
+        Service: serviceLabel ?? "Not specified",
+        Frequency: frequencyLabel ?? "Not specified",
+        "Square Footage": `${sqftNum.toLocaleString()} sq ft`,
+        Rate: rateFormatted,
+        "Visits Per Month": quote.visitsPerMonth?.toString() ?? "N/A",
+        "Per Visit Price": quote.perVisitPrice ? formatPrice(quote.perVisitPrice) : "N/A",
+        "Quoted Price": quotedPrice,
+        message: emailMessage,
+      },
+      {
+        name: entries.name ?? "",
+        phone: entries.phone ?? "",
+        email: entries.email,
+        message: [
+          "Instant quote request",
+          `Square footage: ${sqftNum.toLocaleString()} sq ft`,
+          `Quoted on the website: ${quotedPrice}`,
+          emailMessage,
+        ]
+          .filter(Boolean)
+          .join("\n"),
+        service: serviceLabel ?? undefined,
+        honeypot: entries.website,
+      },
+    );
 
     if (result.ok) {
       setConfirmedQuote({ ...quote, sqft: sqftNum });

@@ -3,7 +3,7 @@
 import { FormEvent, useState } from "react";
 import { Button } from "./Button";
 import { SmsConsentDisclosure } from "./SmsConsentDisclosure";
-import { submitToWeb3Forms } from "@/lib/web3forms";
+import { submitLead } from "@/lib/portal-leads";
 
 type FormState = "idle" | "submitting" | "success" | "error";
 
@@ -25,11 +25,20 @@ export function ContactForm() {
     const formData = new FormData(form);
 
     const entries = Object.fromEntries(formData.entries()) as Record<string, string>;
-    const result = await submitToWeb3Forms({
-      subject: `New Contact Message — ${entries.name ?? ""}`,
-      from_name: entries.name ?? "",
-      ...entries,
-    });
+    const result = await submitLead(
+      {
+        subject: `New Contact Message — ${entries.name ?? ""}`,
+        from_name: entries.name ?? "",
+        ...entries,
+      },
+      {
+        name: entries.name ?? "",
+        phone: entries.phone ?? "",
+        email: entries.email,
+        message: entries.message ?? "",
+        honeypot: entries.website,
+      },
+    );
 
     if (result.ok) {
       setState("success");
